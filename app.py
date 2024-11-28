@@ -29,52 +29,26 @@ def uploads():
     file = request.files.get("file")
     if not file:
         return render_template("index.html", error="No file uploaded!")
-    # 파일 저장하기
+    # 업로드된 파일 저장하기
     file_path = Path(UPLOAD_FOLDER)/file.filename
     file.save(str(file_path))
     print(f"File saved at {file_path}")
 
-    #업로드된 파일 url
-    uploaded_file_url = f"uploads/{file.filename}"
-    # 결과 반환
-    # return render_template("preview.html", uploaded_file_url=uploaded_file_url,filename = file.filename)
-    return render_template("index.html", uploaded_file_url=uploaded_file_url,filename = file.filename)
-
-
-@app.route("/process", methods=["POST"])
-def process():
-    filename = request.form.get("filename")
-    if not filename:
-        return redirect(url_for("index",error=error_message))
-
-    # 변환 작업 실행
-    file_path = Path(UPLOAD_FOLDER)/filename
-    result_file_path = Path(RESULT_FOLDER)/filename
-
-
-    # 변환 작업 (DeOldify 또는 다른 방식 호출)
+    #변환 작업 후 저장하기
     try:
         result_path = colorizer.plot_transformed_image(
-            path=Path(file_path),
+            path = Path(file_path),
             compare=False,
-            render_factor=29,
-            results_dir=Path(RESULT_FOLDER)
+            render_factor = 29,
+            results_dir = Path(RESULT_FOLDER)
         )
-        print(f"colorization complete: {result_path}")
+        print(f"Colorization complete at {result_path}")
     except Exception as e:
-        print("colorization error")
-        # return render_template("index.html", error=f"Error during processing: {e}")
-        return redirect(url_for("index",error=error_message))
-
-    # 결과 페이지 렌더링
-    result_file_url = f"results/{filename}"
-    return render_template("result.html", result_file_url=result_file_url)
-
-# @app.route("/results/<filename>")
-# def results(filename):
-#     print(f"file name is {filename}")
-#     result_image = f"./results/{filename}"
-#     return render_template("result.html", result_image=result_image)
+        print("Colorization Error")
+        return redirect(url_for("index",error="Colorization Error"))
+    
+    result_file_url = f"results/{file.filename}"
+    return render_template("result.html",result_file_url = result_file_url)
 
 
 if __name__ == "__main__":
