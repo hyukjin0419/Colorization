@@ -25,42 +25,56 @@ def index():
 
 @app.route("/uploads", methods=["POST"])
 def uploads():
-    if request.method == "POST":
-        # 업로드된 파일 가져오기
-        file = request.files.get("file")
-        if not file:
-            return render_template("index.html", error="No file uploaded!")
-        file_path = Path(UPLOAD_FOLDER)/file.filename
-        file.save(str(file_path))
-        print(file_path)
+    # 업로드된 파일 가져오기
+    file = request.files.get("file")
+    if not file:
+        return render_template("index.html", error="No file uploaded!")
+    # 파일 저장하기
+    file_path = Path(UPLOAD_FOLDER)/file.filename
+    file.save(str(file_path))
+    print(f"File saved at {file_path}")
 
-        print(f"File saved at {file_path}")
-        print("Progressing Colorization")
+    #업로드된 파일 url
+    uploaded_file_url = f"uploads/{file.filename}"
+    # 결과 반환
+    # return render_template("preview.html", uploaded_file_url=uploaded_file_url,filename = file.filename)
+    return render_template("index.html", uploaded_file_url=uploaded_file_url,filename = file.filename)
 
-        # DeOldify 컬러화 처리
-        result_path = Path(RESULT_FOLDER)/f"{file.filename}"
-        try:
-            result_path = colorizer.plot_transformed_image(
-                path=str(file_path),
-                compare=False,
-                render_factor=29,
-                results_dir=Path(RESULT_FOLDER)
-            )
-            print(f"Colorization Completed. Result saved at: {result_path}")
-        except Exception as e:
-            print(f"Colorization Error: {str(e)}")
-            return render_template("index.html", error="Colorization Failed!")
 
-        # 결과 반환
-        return redirect(url_for("results", filename=file.filename))
+@app.route("/process", methods=["POST"])
+def process():
+    filename = request.form.get("filename")
+    if not filename:
+        return redirect(url_for("index",error=error_message))
 
-    return render_template("index.html")
+    # 변환 작업 실행
+    file_path = Path(UPLOAD_FOLDER)/filename
+    result_file_path = Path(RESULT_FOLDER)/filename
 
-@app.route("/results/<filename>")
-def results(filename):
-    print(f"file name is {filename}")
-    result_image = f"./results/{filename}"
-    return render_template("result.html", result_image=result_image)
+
+    # 변환 작업 (DeOldify 또는 다른 방식 호출)
+    try:
+        result_path = colorizer.plot_transformed_image(
+            path=Path(file_path),
+            compare=False,
+            render_factor=29,
+            results_dir=Path(RESULT_FOLDER)
+        )
+        print(f"colorization complete: {result_path}")
+    except Exception as e:
+        print("colorization error")
+        # return render_template("index.html", error=f"Error during processing: {e}")
+        return redirect(url_for("index",error=error_message))
+
+    # 결과 페이지 렌더링
+    result_file_url = f"results/{filename}"
+    return render_template("result.html", result_file_url=result_file_url)
+
+# @app.route("/results/<filename>")
+# def results(filename):
+#     print(f"file name is {filename}")
+#     result_image = f"./results/{filename}"
+#     return render_template("result.html", result_image=result_image)
 
 
 if __name__ == "__main__":
