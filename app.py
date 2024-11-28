@@ -52,12 +52,12 @@ def uploads():
             return render_template("index.html", error="Colorization Failed!")
 
         # 결과 반환
-        return redirect(url_for("result", filename=file.filename))
+        return redirect(url_for("results", filename=file.filename))
 
     return render_template("index.html")
 
 @app.route("/results/<filename>")
-def result(filename):
+def results(filename):
     print(f"file name is {filename}")
     result_image = f"./results/{filename}"
     return render_template("result.html", result_image=result_image)
