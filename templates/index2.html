@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>DeOldify Web App</title>
+  </head>
+  <body>
+    <h1>DeOldify Web App</h1>
+    <form action="/uploads" method="POST" enctype="multipart/form-data">
+      <input type="file" id="fileInput" name="file" required />
+      <img id="preview" alt="Uploaded Image" />
+
+      <button type="submit">Upload and Colorize</button>
+    </form>
+  </body>
+</html>
+
+<script>
+  const fileInput = document.getElementById("fileInput");
+  const preview = document.getElementById("preview");
+
+  fileInput.addEventListener("change", () => {
+    const file = fileInput.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        preview.src = e.target.result;
+        preview.style.display = "block";
+      };
+      reader.readAsDataURL(file);
+    } else {
+      preview.style.display = "none";
+    }
+  });
+</script>
+
+<style>
+  #preview {
+    display: none;
+  }
+</style>

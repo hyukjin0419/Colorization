@@ -4,39 +4,169 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>DeOldify Web App</title>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+      body {
+        font-family: 'Montserrat', sans-serif;
+        margin: 0;
+        padding: 0;
+        background: #ffffff;
+        color: #333;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        height: 100vh;
+        overflow: hidden;
+      }
+      .navbar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        background: #ffffff;
+        border-bottom: 1px solid #e5e5e5;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 1rem 2rem;
+        z-index: 1000;
+      }
+
+      .logo {
+        font-family: 'Montserrat', sans-serif;
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: #333;
+        text-transform: uppercase;
+      }
+
+      .menu {
+        display: flex;
+        gap: 1.5rem;
+      }
+
+      .menu a {
+        text-decoration: none;
+        color: #333;
+        font-size: 1rem;
+        font-weight: 500;
+        transition: color 0.3s, font-weight 0.3s;
+      }
+
+      .menu a:hover {
+        color: #000;
+        font-weight: 700;
+      }
+
+      .main {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+        margin-top: 5rem;
+        width: 100%;
+        max-width: 800px;
+        padding: 2rem;
+      }
+
+      .main h1 {
+        font-size: 2.5rem;
+        font-weight: 700;
+        color: #333;
+        margin-bottom: 1rem;
+      }
+
+      .main p {
+        font-size: 1rem;
+        color: #666;
+        line-height: 1.5;
+        margin-bottom: 2rem;
+      }
+      .upload-box {
+        background: #f9f9f9;
+        padding: 2rem;
+        border-radius: 8px;
+        border: 1px solid #e5e5e5;
+        text-align: center;
+        width: 100%;
+        max-width: 600px;
+        margin-top: 2rem;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+      }
+
+      input[type="file"] {
+        display: block;
+        margin: 1rem auto;
+        padding: 0.5rem;
+        border: 2px dashed #ccc;
+        border-radius: 8px;
+        background: #ffffff;
+        font-size: 1rem;
+        cursor: pointer;
+        transition: border-color 0.3s;
+        width: 100%;
+        max-width: 300px;
+        color: #666;
+      }
+
+      input[type="file"]:hover {
+        border-color: #000;
+      }
+
+      button {
+        margin-top: 1rem;
+        background: #333;
+        color: #fff;
+        font-size: 1rem;
+        padding: 0.8rem 2rem;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: background-color 0.3s, transform 0.2s;
+      }
+
+      button:hover {
+        background: #000;
+        transform: scale(1.05);
+      }
+
+      @media (max-width: 768px) {
+        .main h1 {
+          font-size: 2rem;
+        }
+
+        .main p {
+          font-size: 0.9rem;
+        }
+
+        .menu {
+          gap: 1rem;
+        }
+      }
+    </style>
   </head>
   <body>
-    <h1>DeOldify Web App</h1>
-    <form action="/uploads" method="POST" enctype="multipart/form-data">
-      <input type="file" id="fileInput" name="file" required />
-      <img id="preview" alt="Uploaded Image" />
+    <nav class="navbar">
+      <div class="logo">DeOldify</div>
+      <div class="menu">
+        <a href="#home">Home</a>
+        <a href="#about">About</a>
+        <a href="#contact">Contact</a>
+      </div>
+    </nav>
 
-      <button type="submit">Upload and Colorize</button>
-    </form>
+    <main class="main">
+      <h1>Welcome to DeOldify</h1>
+      <p>Upload your images to transform them into vibrant, colorized memories.</p>
+
+      <div class="upload-box">
+        <form action="/uploads" method="POST" enctype="multipart/form-data">
+          <input type="file" id="fileInput" name="file" required />
+          <button type="submit">Upload and Colorize</button>
+        </form>
+      </div>
+    </main>
   </body>
 </html>
-
-<script>
-  const fileInput = document.getElementById("fileInput");
-  const preview = document.getElementById("preview");
-
-  fileInput.addEventListener("change", () => {
-    const file = fileInput.files[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        preview.src = e.target.result;
-        preview.style.display = "block";
-      };
-      reader.readAsDataURL(file);
-    } else {
-      preview.style.display = "none";
-    }
-  });
-</script>
-
-<style>
-  #preview {
-    display: none;
-  }
-</style>

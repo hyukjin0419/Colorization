@@ -1,17 +1,138 @@
-<!DOCTYPE htm<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>DeOldify Result</title>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+      body {
+        font-family: 'Montserrat', sans-serif;
+        margin: 0;
+        padding: 0;
+        background: #ffffff;
+        color: #333;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        min-height: 100vh;
+        text-align: center;
+      }
+
+      .navbar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        background: #ffffff;
+        border-bottom: 1px solid #e5e5e5;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 1rem 2rem;
+        z-index: 1000;
+      }
+
+      .logo {
+        font-family: 'Montserrat', sans-serif;
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: #333;
+        text-transform: uppercase;
+      }
+
+      .menu a {
+        text-decoration: none;
+        color: #333;
+        font-size: 1rem;
+        font-weight: 500;
+        transition: color 0.3s;
+        margin-left: 1.5rem;
+      }
+
+      .menu a:hover {
+        color: #000;
+        font-weight: 700;
+      }
+
+      .main {
+        margin-top: 6rem;
+        width: 100%;
+        max-width: 800px;
+        padding: 2rem;
+      }
+
+      .main h1 {
+        font-size: 2rem;
+        font-weight: 700;
+        color: #333;
+        margin-bottom: 1rem;
+      }
+
+      .main img {
+        max-width: 100%;
+        height: auto;
+        border-radius: 8px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        margin: 2rem 0;
+      }
+
+      .main a,
+      .main button {
+        text-decoration: none;
+        background: #333;
+        color: #fff;
+        padding: 0.8rem 1.5rem;
+        border-radius: 8px;
+        font-size: 1rem;
+        font-weight: 500;
+        transition: background-color 0.3s, transform 0.2s;
+        cursor: pointer;
+        border: none;
+        display: inline-block;
+        margin: 0.5rem;
+      }
+
+      .main a:hover,
+      .main button:hover {
+        background: #000;
+        transform: scale(1.05);
+      }
+    </style>
   </head>
   <body>
-    <h1>Colorized Imaage</h1>
-    <img
-      src="{{ url_for('static', filename=result_file_url) }}"
-      alt="Colorized Image"
-    />
 
-    <a href="/">Go Back</a>
+    <nav class="navbar">
+      <div class="logo">DeOldify</div>
+      <div class="menu">
+        <a href="/">Home</a>
+      </div>
+    </nav>
+
+    <main class="main">
+      <h1>Colorized Image</h1>
+      <img
+        id="colorizedImage"
+        src="{{ url_for('static', filename=result_file_url) }}"
+        alt="Colorized Image"
+      />
+      <a href="/" id="goBackButton">Go Back</a>
+      <button id="downloadButton">Download Image</button>
+    </main>
+
+    <script>
+      // 다운로드 버튼
+      const downloadButton = document.getElementById("downloadButton");
+      const image = document.getElementById("colorizedImage");
+
+      downloadButton.addEventListener("click", () => {
+        const link = document.createElement("a");
+        link.href = image.src; 
+        link.download = "colorized_image.jpg"; 
+        link.click(); 
+      });
+    </script>
   </body>
 </html>
