@@ -3,6 +3,7 @@ from deoldify.visualize import *
 import os
 import matplotlib
 from pathlib import Path
+import cv2
 
 matplotlib.use('Agg')
 
@@ -23,7 +24,7 @@ colorizer = get_image_colorizer(artistic=True)
 def index():
     return render_template('index.html')
 
-@app.route("/uploads", methods=["POST"])
+@app.route("/result", methods=["POST"])
 def uploads():
     # 업로드된 파일 가져오기
     file = request.files.get("file")
@@ -50,7 +51,31 @@ def uploads():
     result_file_url = f"results/{file.filename}"
     return render_template("result.html",result_file_url = result_file_url)
 
+#해상도 부분
+def upscale_image(input_path, output_path, scale=2):
+    target_image = cv2.imread(str(input_path))
+    sr = dnn_superres.DnnSuperResImpl_create()
+    path = './models/EDSR_x3.pb'
+    sr.readModel(path)
+    sr.setModel('edsr', 3)
+    upscaled = sr.upsample(target_image)
+    cv2.imwrite(output_path, upscaled)
 
+#해상도 개선
+@app.route("/enhance/<filename>", methods=["GET"])
+def enhance_image(filename):
+    input_path = Path(RESULT_FOLDER) / filename
+    output_path = Path(RESULT_FOLDER) / f"enhanced_{filename}"
+
+    try:
+        # 이미지 해상도 개선
+        upscale_image(input_path, output_path, scale=2)
+        return render_template("result.html", result_file_url=f"results/enhanced_{filename}")
+    except Exception as e:
+        print(f"Enhancement error: {e}")
+        return redirect(url_for("index"))
+
+        
 if __name__ == "__main__":
     app.run(debug=False)
 
