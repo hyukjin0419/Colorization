@@ -75,10 +75,16 @@ def enhance_image(filename):
         print(f"Enhancement error: {e}")
         return redirect(url_for("index"))
 
+
+#비디오 부분
+@app.route("/video")
+def video():
+    return render_template("video.html")
         
 if __name__ == "__main__":
     app.run(debug=False)
 
+@app.route("/video_result", methods=["POST"])
 
 #다운로드 버튼 추가해야함
 #버퍼링 만들어야 함
