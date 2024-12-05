@@ -14,11 +14,16 @@ app = Flask(__name__)
 # 업로드와 결과 디렉토리 생성
 UPLOAD_FOLDER = "./static/uploads"
 RESULT_FOLDER = "./static/results"
+UPLOAD_VIDEO = "./static/uploads_video"
+RESULT_VIDEO = "./static/result_video"
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 os.makedirs(RESULT_FOLDER, exist_ok=True)
+os.makedirs(UPLOAD_VIDEO, exist_ok=True)
+os.makedirs(RESULT_VIDEO, exist_ok=True)
 
 # DeOldify 모델 로드
 colorizer = get_image_colorizer(artistic=True)
+video_colorizer = get_video_colorizer()
 
 @app.route('/')
 def index():
@@ -80,11 +85,46 @@ def enhance_image(filename):
 @app.route("/video")
 def video():
     return render_template("video.html")
-        
-if __name__ == "__main__":
-    app.run(debug=False)
 
 @app.route("/video_result", methods=["POST"])
+def upload_vides():
+    file = request.files.get("file")
+    if not file:
+        return render_template("video.html", error="No file uploaded!")
+    # 업로드된 파일 저장하기
+    file_path = Path(UPLOAD_VIDEO)/file.filename
+    file.save(str(file_path))
+    print(f"Video saved at {file_path}")
+
+    try:
+        print(f"Processing video at: {file_path}")
+        result_path = video_colorizer.colorize_from_file_name(
+            file_name=Path(file_path).name,
+            render_factor=21,
+            watermarked=False,
+            post_process=True,
+        )
+        print(f"Video Colorization complete at {result_path}")
+        if not result_path.exists():
+            print("Result file not found!")
+            return render_template("video.html", error="Result file not created!")
+    except Exception as e:
+        print(f"Video Colorization Error: {e}")
+        return render_template("video.html", error="Video Colorization Error")
+
+    print(f"result path {result_path}")
+
+    # return "workgin!"
+    result_file_url = f"result_video/{file.filename}"
+    return render_template("result_video.html",result_file_url = result_file_url)
+     
+    
+        
+if __name__ == "__main__":
+    app.run(debug=True)
+
+
+    
 
 #다운로드 버튼 추가해야함
 #버퍼링 만들어야 함
